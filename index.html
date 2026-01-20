@@ -3,286 +3,888 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>$SEED</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+    <title>$SEED | The Origin of Capital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --soil-dark: #0a0705;
+            --soil-mid: #1a120a;
+            --soil-light: #2d1f12;
+            --earth-brown: #3d2914;
+            --root-brown: #5c3d1e;
+            --text-light: #f5efe6;
+            --text-dim: #a89680;
+            --text-muted: #6b5a48;
+            --accent-green: #7cb342;
+            --accent-lime: #9ccc65;
+            --accent-gold: #d4a24c;
+            --accent-glow: rgba(124, 179, 66, 0.4);
+        }
 
+        html { scroll-behavior: smooth; }
+        
         body {
-            background: #000;
-            min-height: 100vh;
+            background: var(--soil-dark);
+            color: var(--text-light);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ==================== FIXED ELEMENTS ==================== */
+        
+        /* X Link - Fixed Right */
+        .x-float {
+            position: fixed;
+            top: 50%;
+            right: 2%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            animation: xBob 3s ease-in-out infinite;
+        }
+
+        .x-float-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-lime));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px var(--accent-glow), 0 4px 20px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .x-float:hover .x-float-circle {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px var(--accent-glow);
+        }
+
+        .x-float-icon {
+            width: 32px;
+            height: 32px;
+            fill: var(--soil-dark);
+        }
+
+        .x-float-text {
+            font-size: 0.6rem;
+            font-weight: 500;
+            color: var(--accent-green);
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* CA Bubble - Fixed Left */
+        .ca-bubble {
+            position: fixed;
+            top: 50%;
+            left: 2%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            background: linear-gradient(135deg, var(--earth-brown), var(--soil-mid));
+            border: 2px solid var(--accent-gold);
+            padding: 1rem 1.2rem;
+            text-align: center;
+            animation: caPulse 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(212, 162, 76, 0.3);
+        }
+
+        .ca-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            letter-spacing: 0.2em;
+        }
+
+        .ca-status {
+            font-size: 0.55rem;
+            color: var(--accent-lime);
+            letter-spacing: 0.15em;
+            margin-top: 0.3rem;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        .ca-dot {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-lime);
+            border-radius: 50%;
+            animation: dotPulse 1.5s ease-in-out infinite;
+        }
+
+        /* ==================== BACKGROUND LAYERS ==================== */
+
+        .underground-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
             overflow: hidden;
-            font-family: 'Cormorant Garamond', Georgia, serif;
         }
 
-        /* Deep Layered Background */
-        .void {
-            position: fixed;
+        .soil-gradient {
+            position: absolute;
             inset: 0;
-            background: 
-                radial-gradient(ellipse 80% 50% at 50% 100%, rgba(15, 12, 8, 1) 0%, transparent 60%),
-                radial-gradient(ellipse 100% 80% at 50% 50%, rgba(8, 6, 4, 0.8) 0%, transparent 50%),
-                radial-gradient(circle at 50% 60%, rgba(20, 16, 10, 0.6) 0%, transparent 40%),
-                #000;
+            background: linear-gradient(180deg, 
+                var(--soil-dark) 0%,
+                var(--soil-mid) 30%,
+                var(--soil-light) 60%,
+                var(--earth-brown) 100%
+            );
         }
 
-        /* Texture Layer */
-        .texture {
+        .dirt-texture {
+            position: absolute;
+            inset: 0;
+            opacity: 0.08;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Animated Roots */
+        .roots-container {
             position: fixed;
             inset: 0;
-            opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
             pointer-events: none;
+            overflow: hidden;
         }
 
-        /* Depth Shadows */
-        .depth {
+        .root {
+            position: absolute;
+            background: linear-gradient(to bottom, var(--root-brown), var(--earth-brown));
+            border-radius: 10px;
+            opacity: 0.3;
+        }
+
+        .root-1 { width: 6px; height: 300px; left: 8%; top: 20%; transform: rotate(15deg); animation: rootGrow 8s ease-in-out infinite; }
+        .root-2 { width: 4px; height: 200px; left: 15%; top: 40%; transform: rotate(-10deg); animation: rootGrow 10s ease-in-out infinite 1s; }
+        .root-3 { width: 5px; height: 350px; left: 85%; top: 15%; transform: rotate(-20deg); animation: rootGrow 9s ease-in-out infinite 2s; }
+        .root-4 { width: 4px; height: 250px; left: 90%; top: 45%; transform: rotate(10deg); animation: rootGrow 11s ease-in-out infinite 0.5s; }
+        .root-5 { width: 3px; height: 180px; left: 50%; top: 60%; transform: rotate(5deg); animation: rootGrow 7s ease-in-out infinite 1.5s; }
+        .root-6 { width: 5px; height: 280px; left: 25%; top: 55%; transform: rotate(-8deg); animation: rootGrow 12s ease-in-out infinite 3s; }
+        .root-7 { width: 4px; height: 220px; left: 75%; top: 50%; transform: rotate(12deg); animation: rootGrow 8s ease-in-out infinite 2.5s; }
+
+        /* Animated Worms */
+        .worms-container {
             position: fixed;
             inset: 0;
-            background: 
-                radial-gradient(ellipse 120% 60% at 50% 110%, rgba(0,0,0,0.9) 0%, transparent 50%),
-                radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,0,0,0.7) 0%, transparent 40%);
             pointer-events: none;
+            overflow: hidden;
         }
 
-        /* Vignette */
-        .vignette {
+        .worm {
+            position: absolute;
+            width: 50px;
+            height: 10px;
+            background: linear-gradient(90deg, #c9a07a, #b8917a, #c9a07a);
+            border-radius: 20px;
+            opacity: 0.5;
+        }
+
+        .worm::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 15px;
+            height: 10px;
+            background: #b8917a;
+            border-radius: 50%;
+        }
+
+        .worm-1 { left: 12%; top: 65%; animation: wormMove 6s ease-in-out infinite; }
+        .worm-2 { left: 70%; top: 75%; animation: wormMove 8s ease-in-out infinite 2s; }
+        .worm-3 { left: 40%; top: 80%; animation: wormMove 7s ease-in-out infinite 1s; }
+        .worm-4 { left: 85%; top: 60%; animation: wormMove 5s ease-in-out infinite 3s; }
+        .worm-5 { left: 25%; top: 85%; animation: wormMove 9s ease-in-out infinite 1.5s; }
+
+        /* Floating Dirt Particles */
+        .particles-container {
             position: fixed;
             inset: 0;
-            background: radial-gradient(ellipse 70% 70% at 50% 50%, transparent 0%, rgba(0,0,0,0.6) 100%);
             pointer-events: none;
+            overflow: hidden;
         }
 
-        /* The Seed Container */
-        .origin {
-            position: fixed;
-            inset: 0;
+        .dirt-particle {
+            position: absolute;
+            background: var(--root-brown);
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        /* ==================== HERO SECTION ==================== */
+
+        .hero {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 2rem;
+            position: relative;
+            text-align: center;
         }
 
-        /* Seed Glow Layers */
-        .seed-aura {
+        .hero-glow {
             position: absolute;
-            width: 500px;
-            height: 500px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(124, 179, 66, 0.15) 0%, transparent 60%);
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 250, 235, 0.08) 0%, rgba(255, 245, 220, 0.03) 30%, transparent 60%);
-            filter: blur(40px);
-            animation: auraBreath 8s ease-in-out infinite;
+            animation: glowPulse 4s ease-in-out infinite;
+            pointer-events: none;
         }
 
-        .seed-halo {
-            position: absolute;
-            width: 350px;
-            height: 350px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 252, 245, 0.06) 0%, transparent 50%);
-            filter: blur(20px);
-            animation: haloBreath 6s ease-in-out infinite 1s;
-        }
-
-        .seed-core {
+        .hero-logo {
+            width: clamp(250px, 35vw, 400px);
+            height: auto;
+            filter: drop-shadow(0 0 60px rgba(124, 179, 66, 0.4)) drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+            animation: logoFloat 5s ease-in-out infinite;
             position: relative;
             z-index: 10;
         }
 
-        .seed-img {
-            width: clamp(180px, 28vw, 300px);
-            height: auto;
-            filter: 
-                drop-shadow(0 0 80px rgba(255, 250, 230, 0.15))
-                drop-shadow(0 0 40px rgba(255, 248, 220, 0.1))
-                drop-shadow(0 20px 40px rgba(0, 0, 0, 0.8));
-            animation: seedFloat 10s ease-in-out infinite;
+        .hero-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(4rem, 15vw, 9rem);
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            margin-top: 1.5rem;
+            background: linear-gradient(135deg, var(--text-light) 0%, var(--accent-gold) 50%, var(--accent-lime) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 4s linear infinite;
+            text-shadow: 0 0 60px var(--accent-glow);
         }
 
-        /* Text - Distant, Secondary */
-        .whisper {
-            position: fixed;
-            font-size: 0.65rem;
-            font-weight: 300;
-            letter-spacing: 0.5em;
-            color: rgba(180, 170, 150, 0.25);
+        .hero-subtitle {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 500;
+            color: var(--accent-lime);
+            letter-spacing: 0.3em;
+            margin-top: 0.5rem;
             text-transform: uppercase;
-            pointer-events: none;
+            text-shadow: 0 0 20px var(--accent-glow);
         }
 
-        .whisper-top {
-            top: 12%;
-            left: 50%;
-            transform: translateX(-50%);
+        .hero-tagline {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 2rem;
+            max-width: 500px;
+            line-height: 1.8;
         }
 
-        .whisper-bottom {
-            bottom: 12%;
-            left: 50%;
-            transform: translateX(-50%);
+        .hero-tagline .highlight {
+            color: var(--accent-gold);
+            font-weight: 600;
         }
 
-        .whisper-left {
-            top: 50%;
-            left: 5%;
-            transform: translateY(-50%) rotate(-90deg);
-            transform-origin: center;
-        }
-
-        .whisper-right {
-            top: 50%;
-            right: 5%;
-            transform: translateY(-50%) rotate(90deg);
-            transform-origin: center;
-        }
-
-        /* X Link - Subtle Corner */
-        .x-link {
-            position: fixed;
-            bottom: 4%;
-            right: 4%;
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.6rem;
-            text-decoration: none;
-            opacity: 0.2;
-            transition: opacity 0.6s ease;
-            z-index: 100;
+            gap: 0.5rem;
+            animation: bounce 2s ease-in-out infinite;
         }
 
-        .x-link:hover {
-            opacity: 0.5;
-        }
-
-        .x-icon {
-            width: 18px;
-            height: 18px;
-            fill: rgba(180, 170, 150, 0.6);
-            transition: fill 0.4s ease;
-        }
-
-        .x-link:hover .x-icon {
-            fill: rgba(255, 250, 240, 0.7);
-        }
-
-        .x-handle {
-            font-size: 0.6rem;
-            font-weight: 300;
+        .scroll-text {
+            font-size: 0.7rem;
+            color: var(--text-muted);
             letter-spacing: 0.2em;
-            color: rgba(180, 170, 150, 0.5);
-            transition: color 0.4s ease;
+            text-transform: uppercase;
         }
 
-        .x-link:hover .x-handle {
-            color: rgba(255, 250, 240, 0.6);
+        .scroll-arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid var(--accent-green);
+            border-bottom: 2px solid var(--accent-green);
+            transform: rotate(45deg);
         }
 
-        /* Dust Particles */
-        .dust {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
+        /* ==================== ABOUT SECTION ==================== */
+
+        .section {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .section-divider {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--root-brown), var(--accent-green), var(--root-brown), transparent);
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            color: var(--accent-lime);
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-light);
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 2;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+
+        .about-text .green { color: var(--accent-green); font-weight: 600; }
+        .about-text .gold { color: var(--accent-gold); font-weight: 600; }
+        .about-text .lime { color: var(--accent-lime); font-weight: 600; }
+
+        /* ==================== THE SEED EFFECT ==================== */
+
+        .flywheel-section {
+            background: linear-gradient(180deg, transparent, rgba(45, 31, 18, 0.5), transparent);
+        }
+
+        .flywheel-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .flywheel-intro {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            margin-bottom: 4rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.9;
+        }
+
+        .flywheel-stages {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .flywheel-stages { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 500px) {
+            .flywheel-stages { grid-template-columns: 1fr; }
+        }
+
+        .stage-card {
+            background: linear-gradient(135deg, var(--soil-mid), var(--soil-light));
+            border: 1px solid var(--root-brown);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
             overflow: hidden;
         }
 
-        .mote {
+        .stage-card::before {
+            content: '';
             position: absolute;
-            width: 1px;
-            height: 1px;
-            background: rgba(255, 250, 240, 0.3);
-            border-radius: 50%;
-            animation: drift 30s linear infinite;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(124, 179, 66, 0.1), transparent);
+            transition: left 0.6s ease;
         }
 
-        /* Animations */
-        @keyframes auraBreath {
-            0%, 100% { 
-                opacity: 0.6; 
-                transform: scale(1); 
-            }
-            50% { 
-                opacity: 1; 
-                transform: scale(1.08); 
-            }
+        .stage-card:hover::before {
+            left: 100%;
         }
 
-        @keyframes haloBreath {
-            0%, 100% { 
-                opacity: 0.7; 
-                transform: scale(1); 
-            }
-            50% { 
-                opacity: 1; 
-                transform: scale(1.05); 
-            }
+        .stage-card:hover {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 30px rgba(124, 179, 66, 0.2);
+            transform: translateY(-5px);
         }
 
-        @keyframes seedFloat {
-            0%, 100% { 
-                transform: translateY(0); 
-            }
-            50% { 
-                transform: translateY(-8px); 
-            }
+        .stage-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
 
-        @keyframes drift {
-            0% {
-                transform: translateY(100vh) translateX(0);
-                opacity: 0;
-            }
-            5% { opacity: 0.4; }
-            95% { opacity: 0.4; }
-            100% {
-                transform: translateY(-100vh) translateX(30px);
-                opacity: 0;
-            }
+        .stage-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            letter-spacing: 0.3em;
+            margin-bottom: 0.5rem;
         }
 
-        /* Mobile */
-        @media (max-width: 600px) {
-            .whisper { font-size: 0.55rem; letter-spacing: 0.3em; }
-            .whisper-left, .whisper-right { display: none; }
-            .x-link { bottom: 3%; right: 3%; }
+        .stage-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent-lime);
+            margin-bottom: 0.8rem;
+        }
+
+        .stage-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Arrow between stages */
+        .flywheel-arrow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .arrow-line {
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-lime));
+        }
+
+        .arrow-head {
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid var(--accent-lime);
+        }
+
+        /* ==================== WHY SEED WINS ==================== */
+
+        .why-section {
+            background: linear-gradient(180deg, transparent, rgba(124, 179, 66, 0.03), transparent);
+        }
+
+        .reasons-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .reasons-grid { grid-template-columns: 1fr; max-width: 400px; }
+        }
+
+        .reason-card {
+            background: rgba(26, 18, 10, 0.8);
+            border: 1px solid rgba(124, 179, 66, 0.2);
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .reason-card:hover {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 40px rgba(124, 179, 66, 0.15);
+        }
+
+        .reason-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .reason-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            margin-bottom: 0.8rem;
+        }
+
+        .reason-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ==================== PUMPFUND NARRATIVE ==================== */
+
+        .narrative-section {
+            background: var(--soil-mid);
+            border-top: 1px solid var(--root-brown);
+            border-bottom: 1px solid var(--root-brown);
+        }
+
+        .narrative-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .narrative-quote {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 500;
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .narrative-quote .accent {
+            color: var(--accent-green);
+        }
+
+        .narrative-text {
+            font-size: 1rem;
+            color: var(--text-dim);
+            line-height: 2;
+        }
+
+        /* ==================== FOOTER ==================== */
+
+        .footer {
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--root-brown);
+            background: var(--soil-dark);
+        }
+
+        .footer-logo {
+            width: 80px;
+            height: auto;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 20px var(--accent-glow));
+        }
+
+        .footer-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-lime);
+            letter-spacing: 0.2em;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-tagline {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+        }
+
+        .footer-x {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-lime));
+            color: var(--soil-dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+        }
+
+        .footer-x:hover {
+            box-shadow: 0 0 30px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .footer-x svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--soil-dark);
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+
+        @keyframes xBob {
+            0%, 100% { transform: translateY(-50%); }
+            50% { transform: translateY(calc(-50% - 10px)); }
+        }
+
+        @keyframes caPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 162, 76, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(212, 162, 76, 0.5); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+
+        @keyframes rootGrow {
+            0%, 100% { transform: scaleY(1) rotate(var(--r, 0deg)); opacity: 0.3; }
+            50% { transform: scaleY(1.1) rotate(var(--r, 0deg)); opacity: 0.5; }
+        }
+
+        @keyframes wormMove {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(20px) rotate(8deg); }
+            50% { transform: translateX(0) rotate(-5deg); }
+            75% { transform: translateX(-15px) rotate(5deg); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes textShine {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        @keyframes dirtFloat {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.4; }
+            50% { transform: translateY(-30px) rotate(180deg); opacity: 0.6; }
+            100% { transform: translateY(0) rotate(360deg); opacity: 0.4; }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .x-float { top: auto; bottom: 2%; right: 2%; transform: none; }
+            .x-float-circle { width: 55px; height: 55px; }
+            .x-float-icon { width: 24px; height: 24px; }
+            @keyframes xBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+            
+            .ca-bubble { top: auto; bottom: 2%; left: 2%; transform: none; padding: 0.8rem 1rem; }
+            .ca-label { font-size: 1rem; }
+            
+            .roots-container, .worms-container { opacity: 0.5; }
         }
     </style>
 </head>
 <body>
-    <div class="void"></div>
-    <div class="texture"></div>
-    <div class="depth"></div>
-    <div class="vignette"></div>
-    <div class="dust" id="dust"></div>
-
-    <p class="whisper whisper-top">Before Everything</p>
-    <p class="whisper whisper-bottom">Stage Zero</p>
-    <p class="whisper whisper-left">Origin</p>
-    <p class="whisper whisper-right">Capital Begins Here</p>
-
-    <div class="origin">
-        <div class="seed-aura"></div>
-        <div class="seed-halo"></div>
-        <div class="seed-core">
-            <img src="seed-logo.png" alt="" class="seed-img">
-        </div>
+    <!-- Background Layers -->
+    <div class="underground-bg">
+        <div class="soil-gradient"></div>
+        <div class="dirt-texture"></div>
     </div>
 
-    <a href="https://x.com/Seedonpumpfun" target="_blank" class="x-link">
-        <svg viewBox="0 0 24 24" class="x-icon">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
-        <span class="x-handle">@Seedonpumpfun</span>
+    <div class="roots-container">
+        <div class="root root-1"></div>
+        <div class="root root-2"></div>
+        <div class="root root-3"></div>
+        <div class="root root-4"></div>
+        <div class="root root-5"></div>
+        <div class="root root-6"></div>
+        <div class="root root-7"></div>
+    </div>
+
+    <div class="worms-container">
+        <div class="worm worm-1"></div>
+        <div class="worm worm-2"></div>
+        <div class="worm worm-3"></div>
+        <div class="worm worm-4"></div>
+        <div class="worm worm-5"></div>
+    </div>
+
+    <div class="particles-container" id="particles"></div>
+
+    <!-- Fixed X Link -->
+    <a href="https://x.com/Seedonpumpfun" target="_blank" class="x-float">
+        <div class="x-float-circle">
+            <svg viewBox="0 0 24 24" class="x-float-icon">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+        </div>
+        <span class="x-float-text">@Seedonpumpfun</span>
     </a>
 
+    <!-- Fixed CA Bubble -->
+    <div class="ca-bubble">
+        <div class="ca-dot"></div>
+        <div class="ca-label">CA</div>
+        <div class="ca-status">ADDING SOON</div>
+    </div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <img src="seed-logo.png" alt="$SEED" class="hero-logo">
+        <h1 class="hero-title">$SEED</h1>
+        <p class="hero-subtitle">The Origin of Capital</p>
+        <p class="hero-tagline">
+            Every empire started as a <span class="highlight">seed</span>.<br>
+            Before the growth. Before the hype. Before everything.
+        </p>
+        <div class="scroll-indicator">
+            <span class="scroll-text">Discover</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- ==================== ABOUT ==================== -->
+    <section class="section">
+        <div class="section-divider"></div>
+        <p class="section-label">About</p>
+        <h2 class="section-title">What Is $SEED?</h2>
+        <div class="about-content">
+            <p class="about-text">
+                <span class="green">$SEED</span> represents the earliest stage of capital formation.<br><br>
+                When <span class="gold">PumpFun</span> launched <span class="gold">PumpFund</span> — their own VC arm — 
+                they created a new meta. Projects can now get <span class="lime">funded directly</span> through the launchpad.<br><br>
+                <span class="green">$SEED</span> is the symbol of that moment. The first dollar. The origin point. 
+                The capital that plants itself <span class="gold">before anyone is watching</span>.
+            </p>
+        </div>
+    </section>
+
+    <!-- ==================== THE SEED EFFECT ==================== -->
+    <section class="section flywheel-section">
+        <p class="section-label">The Flywheel</p>
+        <h2 class="section-title">The Seed Effect</h2>
+        <div class="flywheel-container">
+            <p class="flywheel-intro">
+                Every funded project follows the same cycle. 
+                <strong style="color: var(--accent-lime);">$SEED</strong> captures that energy at its purest form.
+            </p>
+            
+            <div class="flywheel-stages">
+                <div class="stage-card">
+                    <div class="stage-icon">🌱</div>
+                    <p class="stage-num">STAGE 01</p>
+                    <h3 class="stage-title">SEED</h3>
+                    <p class="stage-desc">Capital enters. Quiet. Underground. No attention yet. Just potential waiting to grow.</p>
+                </div>
+                <div class="stage-card">
+                    <div class="stage-icon">🌿</div>
+                    <p class="stage-num">STAGE 02</p>
+                    <h3 class="stage-title">SPROUT</h3>
+                    <p class="stage-desc">First signs of life. Early believers notice. Community forms around the vision.</p>
+                </div>
+                <div class="stage-card">
+                    <div class="stage-icon">🌳</div>
+                    <p class="stage-num">STAGE 03</p>
+                    <h3 class="stage-title">GROWTH</h3>
+                    <p class="stage-desc">Momentum builds. Roots spread deep. Branches reach high. Unstoppable expansion.</p>
+                </div>
+                <div class="stage-card">
+                    <div class="stage-icon">👑</div>
+                    <p class="stage-num">STAGE 04</p>
+                    <h3 class="stage-title">EMPIRE</h3>
+                    <p class="stage-desc">Full bloom. From seed capital to market dominance. The cycle completes.</p>
+                </div>
+            </div>
+            
+            <div class="flywheel-arrow">
+                <div class="arrow-line"></div>
+                <div class="arrow-head"></div>
+            </div>
+            
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                Then the cycle repeats. <span style="color: var(--accent-lime);">Plant the next seed.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- ==================== WHY SEED WINS ==================== -->
+    <section class="section why-section">
+        <p class="section-label">The Thesis</p>
+        <h2 class="section-title">Why $SEED Wins</h2>
+        <div class="reasons-grid">
+            <div class="reason-card">
+                <div class="reason-icon">🎯</div>
+                <h3 class="reason-title">Perfect Timing</h3>
+                <p class="reason-text">PumpFund just launched. The meta is fresh. $SEED is the native play on this narrative.</p>
+            </div>
+            <div class="reason-card">
+                <div class="reason-icon">💡</div>
+                <h3 class="reason-title">Instant Recognition</h3>
+                <p class="reason-text">Everyone understands "seed." Seed round. Seed capital. No explanation needed.</p>
+            </div>
+            <div class="reason-card">
+                <div class="reason-icon">🔄</div>
+                <h3 class="reason-title">Evergreen Relevance</h3>
+                <p class="reason-text">As long as projects get funded, $SEED stays relevant. The narrative never dies.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PUMPFUND NARRATIVE ==================== -->
+    <section class="section narrative-section">
+        <div class="narrative-content">
+            <p class="narrative-quote">
+                "Every project that gets <span class="accent">funded</span> started as a <span class="accent">seed</span>."
+            </p>
+            <p class="narrative-text">
+                PumpFund is changing how projects launch. No VCs gatekeeping. No backroom deals. 
+                Just pure capital flowing to the earliest believers.<br><br>
+                <strong style="color: var(--accent-gold);">$SEED</strong> is the symbol of that revolution. 
+                The first mover. The origin story.
+            </p>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <img src="seed-logo.png" alt="$SEED" class="footer-logo">
+        <h3 class="footer-title">$SEED</h3>
+        <p class="footer-tagline">The Origin of Capital</p>
+        <a href="https://x.com/Seedonpumpfun" target="_blank" class="footer-x">
+            <svg viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            Follow @Seedonpumpfun
+        </a>
+    </footer>
+
     <script>
-        const dust = document.getElementById('dust');
-        for (let i = 0; i < 15; i++) {
-            const m = document.createElement('div');
-            m.className = 'mote';
-            m.style.left = Math.random() * 100 + '%';
-            m.style.animationDelay = Math.random() * 30 + 's';
-            m.style.animationDuration = (25 + Math.random() * 15) + 's';
-            dust.appendChild(m);
+        // Create floating dirt particles
+        const particles = document.getElementById('particles');
+        for (let i = 0; i < 40; i++) {
+            const p = document.createElement('div');
+            p.className = 'dirt-particle';
+            p.style.width = (2 + Math.random() * 4) + 'px';
+            p.style.height = p.style.width;
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animation = `dirtFloat ${8 + Math.random() * 10}s ease-in-out infinite`;
+            p.style.animationDelay = Math.random() * 8 + 's';
+            particles.appendChild(p);
         }
     </script>
 </body>
